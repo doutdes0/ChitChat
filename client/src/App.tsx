@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import Chat from './pages/Chat';
 import Login from './pages/Login';
 import SignUp from './pages/Sign-up';
+import './styles/index.css';
 
 const App: React.FC = () => {
   return (
