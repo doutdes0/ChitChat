@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { styled } from 'styled-components';
+import { ToastContainer, ToastOptions, toast } from 'react-toastify';
+import 'react-toastify/ReactToastify.css';
 import spiral from '../assets/logo-spiral.png';
 import chatBubble from '../assets/chatbubble.png';
 
@@ -11,17 +13,55 @@ const SignUp: React.FC = () => {
     password: '',
     confirmPassword: '',
   });
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setInput({ ...input, [name]: value });
   };
+
+  const handleValidation = () => {
+    console.log('inside validation');
+    const { password, confirmPassword, username, email } = input;
+    if (username.length < 3) {
+      toast.error('Username should be greater than 3 characters.', toastOptions);
+      return false;
+    } else if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(email)) {
+      toast.error('Invalid e-mail.', toastOptions);
+      return false;
+    } else if (password.length < 8) {
+      toast.error('Password should be equal or greater than 8 characters.', toastOptions);
+      return false;
+    } else if (password !== confirmPassword) {
+      toast.error('Password confirmation does not match!', toastOptions);
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (handleValidation()) {
+    }
+  };
+
+  const toastOptions: ToastOptions = {
+    position: 'bottom-right',
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: 'light',
   };
   return (
     <>
       <AuthContainer>
-        <form onSubmit={(e) => handleSubmit(e)}>
+        <form
+          //Stop google API from interfering with validation
+          noValidate
+          onSubmit={(e) => handleSubmit(e)}
+        >
           <div className="logo-wrapper">
             <img
               src={spiral}
@@ -73,6 +113,7 @@ const SignUp: React.FC = () => {
           </span>
         </form>
       </AuthContainer>
+      <ToastContainer />
     </>
   );
 };
@@ -127,18 +168,18 @@ const AuthContainer = styled.div`
     input {
       width: 100%;
       color: #ffffff;
-      border: 1px solid #ffffff;
+      border: 1px solid #64c1bacf;
       padding: 0.5rem 0 0.5rem 1rem;
       border-radius: 0.5rem;
       outline: none;
-      background: transparent !important;
+      background: transparent;
       transition: all 0.5s;
       &::placeholder {
         color: rgba(255, 255, 255, 0.8);
         font-weight: 100;
       }
       &:focus {
-        border: 1px solid var(--light-green);
+        border: 1px solid #ffffff;
       }
     }
     button {
@@ -159,7 +200,7 @@ const AuthContainer = styled.div`
       color: #ffffff;
       text-align: center;
       a {
-        color: var(--blue);
+        color: var(--light-green);
         text-decoration: none;
         font-weight: bold;
       }
