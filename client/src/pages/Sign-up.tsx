@@ -1,12 +1,18 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { styled } from 'styled-components';
 import { ToastContainer, ToastOptions, toast } from 'react-toastify';
+import { login, signup, logout } from '../redux/thunks';
+import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
 import 'react-toastify/ReactToastify.css';
 import spiral from '../assets/logo-spiral.png';
 import chatBubble from '../assets/chatbubble.png';
 
 const SignUp: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const loading = useAppSelector((state) => state.auth.loading);
+
   const [input, setInput] = useState({
     username: '',
     email: '',
@@ -41,6 +47,12 @@ const SignUp: React.FC = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (handleValidation()) {
+      const data = (({ username, email, password }) => ({ username, email, password }))(input);
+      dispatch(signup(data))
+        .unwrap()
+        .then((status) => {
+          if (status === 200) navigate('login');
+        });
     }
   };
 
@@ -54,6 +66,7 @@ const SignUp: React.FC = () => {
     progress: undefined,
     theme: 'light',
   };
+
   return (
     <>
       <AuthContainer>
