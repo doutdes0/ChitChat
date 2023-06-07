@@ -50,8 +50,11 @@ const SignUp: React.FC = () => {
       const data = (({ username, email, password }) => ({ username, email, password }))(input);
       dispatch(signup(data))
         .unwrap()
-        .then((status) => {
-          if (status === 200) navigate('login');
+        .then((res) => {
+          navigate('/login');
+        })
+        .catch((e) => {
+          toast.error(e, toastOptions);
         });
     }
   };
