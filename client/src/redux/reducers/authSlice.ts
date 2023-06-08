@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { login, LoginRes, logout, signup } from '../thunks';
 
 interface AuthState {
@@ -8,7 +8,6 @@ interface AuthState {
   avatar: string | undefined;
   accessToken: string;
   loading: boolean;
-  error: unknown;
 }
 
 const initialState: AuthState = {
@@ -18,7 +17,6 @@ const initialState: AuthState = {
   avatar: '',
   accessToken: '',
   loading: false,
-  error: '',
 };
 
 const authSlice = createSlice({
@@ -29,9 +27,8 @@ const authSlice = createSlice({
     builder.addCase(signup.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(signup.rejected, (state, action) => {
+    builder.addCase(signup.rejected, (state) => {
       state.loading = false;
-      state.error = action.error.message;
     });
     builder.addCase(signup.fulfilled, (state) => {
       state.loading = false;
@@ -39,12 +36,11 @@ const authSlice = createSlice({
     builder.addCase(login.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(login.rejected, (state, action) => {
+    builder.addCase(login.rejected, (state) => {
       state.loading = false;
-      state.error = action.error.message;
     });
-    builder.addCase(login.fulfilled, (state, action: PayloadAction<LoginRes>) => {
-      const { username, accessToken, avatar, id } = action.payload;
+    builder.addCase(login.fulfilled, (state, action) => {
+      const { username, accessToken, avatar, id } = action.payload!;
       state.id = id;
       state.username = username;
       state.accessToken = accessToken;
