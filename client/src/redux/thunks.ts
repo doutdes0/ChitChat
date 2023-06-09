@@ -1,6 +1,8 @@
-import axios from '../utils/axios';
+import axiosI from '../utils/axios';
 import { APIRoutes } from '../utils/APIRoutes';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { AxiosError } from 'axios';
+import axios from 'axios';
 
 interface LoginForm {
   username: string;
@@ -12,26 +14,39 @@ interface SignupForm extends LoginForm {
 }
 
 export interface LoginRes {
-  id: string;
-  username: string;
-  accessToken: string;
-  refreshToken: string;
-  avatar?: string;
+  status: number;
+  user: {
+    id: string;
+    username: string;
+    accessToken: string;
+    refreshToken: string;
+    avatar?: string;
+  };
+}
+
+interface SignupRes {
+  msg?: string;
 }
 
 export const signup = createAsyncThunk('auth/signup', async (userForm: SignupForm, thunkAPI) => {
   try {
-    const { status } = await axios.post(APIRoutes.SIGN_UP, userForm);
-    return status;
+    const res = await axiosI.post<any, SignupRes>(APIRoutes.SIGN_UP, userForm);
+    console.log('in thunk resp', res);
+    return res;
   } catch (e) {
-    thunkAPI.rejectWithValue(e);
+    console.log('in thunk rejected', e);
+    if (axios.isAxiosError(e)) {
+      return thunkAPI.rejectWithValue(e.response?.data.msg);
+    } else {
+      return thunkAPI.rejectWithValue(e);
+    }
   }
 });
 
 export const login = createAsyncThunk('auth/login', async (userForm: LoginForm, thunkAPI) => {
   try {
-    const { data } = await axios.post(APIRoutes.LOGIN, userForm);
-    return data;
+    const { user } = await axiosI.post<any, LoginRes>(APIRoutes.LOGIN, userForm);
+    return user;
   } catch (e) {
     thunkAPI.rejectWithValue(e);
   }
@@ -39,7 +54,7 @@ export const login = createAsyncThunk('auth/login', async (userForm: LoginForm, 
 
 export const logout = createAsyncThunk('auth/logout', async (userID: string, thunkAPI) => {
   try {
-    await axios.get(`${APIRoutes.LOGOUT}/${userID}`);
+    await axiosI.get(`${APIRoutes.LOGOUT}/${userID}`);
   } catch (e) {
     thunkAPI.rejectWithValue(e);
   }
