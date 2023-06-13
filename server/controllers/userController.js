@@ -4,7 +4,6 @@ const User = require('../model/userModel');
 const signup = async (req, res, next) => {
   try {
     const { username, password, email } = req.body;
-    console.log(req.body);
     const unExists = await User.findOne({ username });
     if (unExists) return res.status(401).json({ msg: 'Username is taken' });
     const emailExists = await User.findOne({ email });
