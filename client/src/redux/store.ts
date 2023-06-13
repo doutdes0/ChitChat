@@ -9,6 +9,10 @@ export const store = configureStore({
     users: usersReducer,
     messages: messagesReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
