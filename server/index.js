@@ -3,12 +3,18 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const authRouter = require('./routes/auth');
+const credentials = require('./middleware/credentials');
+const corsOptions = require('./config/corsOptions');
+const cookieParser = require('cookie-parser');
+const verifyJWT = require('./middleware/verifyJWT');
 require('dotenv').config();
 
 const app = express();
 
-app.use(cors());
+app.use(credentials);
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 mongoose
   .connect(process.env.MONGO_URI, {
@@ -19,6 +25,7 @@ mongoose
   .catch((e) => console.log(`Connection failed: ${e.message}`));
 
 app.use('/API/auth', authRouter);
+app.use(verifyJWT);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => console.log(`Server's running on port ${PORT}`));
