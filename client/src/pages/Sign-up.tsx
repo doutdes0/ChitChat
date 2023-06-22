@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { styled } from 'styled-components';
 import { ToastContainer, ToastOptions, toast } from 'react-toastify';
-import { login, signup, logout } from '../redux/thunks';
+import { signup } from '../redux/thunks';
 import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
 import 'react-toastify/ReactToastify.css';
 import spiral from '../assets/logo-spiral.png';
@@ -26,7 +26,6 @@ const SignUp: React.FC = () => {
   };
 
   const handleValidation = () => {
-    console.log('inside validation');
     const { password, confirmPassword, username, email } = input;
     if (username.length < 3) {
       toast.error('Username should be greater than 3 characters.', toastOptions);
@@ -50,8 +49,11 @@ const SignUp: React.FC = () => {
       const data = (({ username, email, password }) => ({ username, email, password }))(input);
       dispatch(signup(data))
         .unwrap()
-        .then((res) => {
-          navigate('/login');
+        .then(() => {
+          toast.success('Account created!🎉 Redirecting to login', toastOptions);
+          setTimeout(() => {
+            navigate('/login');
+          }, 5000);
         })
         .catch((e) => {
           toast.error(e, toastOptions);
@@ -72,7 +74,7 @@ const SignUp: React.FC = () => {
 
   return (
     <>
-      <AuthContainer>
+      <Container>
         <form
           //Stop google API from interfering with validation
           noValidate
@@ -128,7 +130,7 @@ const SignUp: React.FC = () => {
             Already have an account? <Link to="/login">LOGIN</Link>
           </span>
         </form>
-      </AuthContainer>
+      </Container>
       <ToastContainer />
     </>
   );
@@ -136,7 +138,7 @@ const SignUp: React.FC = () => {
 
 export default SignUp;
 
-const AuthContainer = styled.div`
+const Container = styled.div`
   height: 100vh;
   width: 100vw;
   display: flex;
