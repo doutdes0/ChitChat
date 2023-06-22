@@ -12,15 +12,11 @@ interface SignupForm extends LoginForm {
   email: string;
 }
 
-export interface LoginRes {
-  status: number;
-  user: {
-    id: string;
-    username: string;
-    accessToken: string;
-    refreshToken: string;
-    avatar?: string;
-  };
+interface LoginRes {
+  _id: string;
+  username: string;
+  accessToken: string;
+  avatar: string;
 }
 
 interface SignupRes {
@@ -42,7 +38,7 @@ export const signup = createAsyncThunk('auth/signup', async (userForm: SignupFor
 
 export const login = createAsyncThunk('auth/login', async (userForm: LoginForm, thunkAPI) => {
   try {
-    const { user } = await axiosI.post<any, LoginRes>(APIRoutes.LOGIN, userForm);
+    const user = await axiosI.post<any, LoginRes>(APIRoutes.LOGIN, userForm);
     return user;
   } catch (e) {
     if (axios.isAxiosError(e)) {
