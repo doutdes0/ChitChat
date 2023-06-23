@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { login, LoginRes, logout, signup } from '../thunks';
+import { login, logout, signup } from '../thunks';
 
 interface AuthState {
   id: string;
@@ -22,7 +22,14 @@ const initialState: AuthState = {
 const authSlice = createSlice({
   name: 'auth',
   initialState,
-  reducers: {},
+  reducers: {
+    logOut: (state) => {
+      state = initialState;
+    },
+    setAccessToken: (state, action) => {
+      state.accessToken = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(signup.pending, (state) => {
       state.loading = true;
@@ -40,8 +47,8 @@ const authSlice = createSlice({
       state.loading = false;
     });
     builder.addCase(login.fulfilled, (state, action) => {
-      const { username, accessToken, avatar, id } = action.payload!;
-      state.id = id;
+      const { username, accessToken, avatar, _id } = action.payload!;
+      state.id = _id;
       state.username = username;
       state.accessToken = accessToken;
       state.avatar = avatar;
@@ -51,3 +58,4 @@ const authSlice = createSlice({
 });
 
 export default authSlice.reducer;
+export const { logOut, setAccessToken } = authSlice.actions;
