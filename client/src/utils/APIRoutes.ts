@@ -7,4 +7,5 @@ export enum APIRoutes {
   SET_AVATAR = '/API/auth/setavatar',
   SEND_MESSAGE = '/API/messages/addmsg',
   RECEIVE_MESSAGE = '/API/messages/getmsg',
+  REFRESH = '/API/messages/refresh',
 }
