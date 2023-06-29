@@ -38,16 +38,42 @@ const login = async (req, res, next) => {
     delete user.email;
     delete user.isAvatarSet;
     delete user.refreshToken;
-    res.cookie('jwt', refreshToken, {
-      httpOnly: true,
-      sameSite: 'None',
-      secure: true,
-      maxAge: 24 * 60 * 60 * 1000,
-    });
-    res.status(200).json({ user });
+    res
+      .cookie('jwt', refreshToken, {
+        httpOnly: true,
+        sameSite: 'None',
+        secure: true,
+        maxAge: 24 * 60 * 60 * 1000,
+      })
+      .status(200)
+      .json({ user });
   } catch (e) {
     next(e);
   }
 };
 
-module.exports = { signup, login };
+const refreshToken = async (req, res, next) => {
+  try {
+    const cookies = req.cookies;
+    if (!cookies.jwt) return res.status(401).json({ msg: 'No refresh token in the headers' });
+    const refreshToken = cookies.jwt;
+    const user = User.findOne({ refreshToken });
+    if (!user) res.status(401).json({ msg: 'User with this refresh token not found' });
+    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
+      if (err || user.username !== decoded.username) {
+        return res.status(401).json({ msg: 'Invalid token(belongs to another user)' });
+      }
+      const accessToken = jwt.sign(
+        { username: decoded.username },
+        process.env.ACCESS_TOKEN_SECRET,
+        {
+          expiresIn: '30s',
+        }
+      );
+      res.status(200).json({ accessToken });
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+module.exports = { signup, login, refreshToken };
