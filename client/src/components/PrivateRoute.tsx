@@ -1,6 +1,7 @@
-import { useAppSelector } from '../hooks/useRedux';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import { useAppSelector, useAppDispatch } from '../hooks/useRedux';
+import { setUserOnReload } from '../redux/reducers/authSlice';
 
 type Props = {
   children: JSX.Element;
@@ -8,10 +9,16 @@ type Props = {
 
 const PrivateRoute: React.FC<Props> = ({ children }) => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const token = useAppSelector((state) => state.auth.accessToken);
+
   useEffect(() => {
-    if (!token) navigate('/login');
-  });
+    if (sessionStorage.getItem('user')) {
+      dispatch(setUserOnReload(JSON.parse(sessionStorage.getItem('user')!)));
+    } else {
+      navigate('/login');
+    }
+  }, [token]);
 
   return children;
 };
