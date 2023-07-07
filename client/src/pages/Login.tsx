@@ -11,7 +11,6 @@ import chatBubble from '../assets/chatbubble.png';
 const Login: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const loading = useAppSelector((state) => state.auth.loading);
 
   const [input, setInput] = useState({
     username: '',
@@ -29,11 +28,9 @@ const Login: React.FC = () => {
     const data = (({ username, password }) => ({ username, password }))(input);
     dispatch(login(data))
       .unwrap()
-      .then(() => {
-        toast.success('Account created!🎉 Redirecting to login', toastOptions);
-        setTimeout(() => {
-          navigate('/login');
-        }, 5000);
+      .then((user) => {
+        sessionStorage.setItem('user', JSON.stringify(user));
+        navigate('/setAvatar');
       })
       .catch((e) => {
         toast.error(e, toastOptions);
