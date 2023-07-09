@@ -1,6 +1,7 @@
-import axiosI from '../utils/axios';
+import { axiosPublic } from '../utils/axios';
 import { APIRoutes } from '../utils/APIRoutes';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { axiosPrivate } from '../utils/axios';
 import axios from 'axios';
 
 interface LoginForm {
@@ -13,19 +14,24 @@ interface SignupForm extends LoginForm {
 }
 
 interface LoginRes {
-  _id: string;
-  username: string;
-  accessToken: string;
-  avatar: string;
+  data: {
+    user: {
+      _id: string;
+      username: string;
+      accessToken: string;
+      avatar: string;
+    };
+  };
 }
 
-interface SignupRes {
-  msg?: string;
+interface SetAvatarParams {
+  userID: string;
+  avatar: string;
 }
 
 export const signup = createAsyncThunk('auth/signup', async (userForm: SignupForm, thunkAPI) => {
   try {
-    const res = await axiosI.post<any, SignupRes>(APIRoutes.SIGN_UP, userForm);
+    const res = await axiosPublic.post(APIRoutes.SIGN_UP, userForm);
     return res;
   } catch (e) {
     if (axios.isAxiosError(e)) {
@@ -38,8 +44,8 @@ export const signup = createAsyncThunk('auth/signup', async (userForm: SignupFor
 
 export const login = createAsyncThunk('auth/login', async (userForm: LoginForm, thunkAPI) => {
   try {
-    const user = await axiosI.post<any, LoginRes>(APIRoutes.LOGIN, userForm);
-    return user;
+    const res = await axiosPublic.post<any, LoginRes>(APIRoutes.LOGIN, userForm);
+    return res.data.user;
   } catch (e) {
     if (axios.isAxiosError(e)) {
       return thunkAPI.rejectWithValue(e.response?.data.msg);
@@ -51,7 +57,7 @@ export const login = createAsyncThunk('auth/login', async (userForm: LoginForm, 
 
 export const logout = createAsyncThunk('auth/logout', async (userID: string, thunkAPI) => {
   try {
-    await axiosI.get(`${APIRoutes.LOGOUT}/${userID}`);
+    await axiosPublic.get(`${APIRoutes.LOGOUT}/${userID}`);
   } catch (e) {
     if (axios.isAxiosError(e)) {
       return thunkAPI.rejectWithValue(e.response?.data.msg);
@@ -60,3 +66,21 @@ export const logout = createAsyncThunk('auth/logout', async (userID: string, thu
     }
   }
 });
+
+export const setAvatar = createAsyncThunk(
+  'user/setAvatar',
+  async (data: SetAvatarParams, thunkAPI) => {
+    try {
+      await axiosPrivate.post(`${APIRoutes.SET_AVATAR}/${data.userID}`, {
+        avatar: data.avatar,
+      });
+      return data.avatar;
+    } catch (e) {
+      if (axios.isAxiosError(e)) {
+        return thunkAPI.rejectWithValue(e.response?.data.msg);
+      } else {
+        return thunkAPI.rejectWithValue(e);
+      }
+    }
+  }
+);
