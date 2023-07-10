@@ -1,13 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { login, logout, signup } from '../thunks';
+import { login, setAvatar } from '../thunks';
+import { PayloadAction } from '@reduxjs/toolkit';
 
-interface AuthState {
+export interface AuthState {
   id: string;
   username: string;
   email: string;
-  avatar: string | undefined;
+  avatar: string;
   accessToken: string;
-  loading: boolean;
 }
 
 const initialState: AuthState = {
@@ -16,7 +16,6 @@ const initialState: AuthState = {
   email: '',
   avatar: '',
   accessToken: '',
-  loading: false,
 };
 
 const authSlice = createSlice({
@@ -26,36 +25,42 @@ const authSlice = createSlice({
     logOut: (state) => {
       state = initialState;
     },
-    setAccessToken: (state, action) => {
-      state.accessToken = action.payload;
+    setUserOnReload: (state, action: PayloadAction<AuthState>) => {
+      const { username, avatar, id, accessToken } = action.payload;
+      state.id = id;
+      state.username = username;
+      state.avatar = avatar;
+      state.accessToken = accessToken;
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(signup.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(signup.rejected, (state) => {
-      state.loading = false;
-    });
-    builder.addCase(signup.fulfilled, (state) => {
-      state.loading = false;
-    });
-    builder.addCase(login.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(login.rejected, (state) => {
-      state.loading = false;
-    });
+    // builder.addCase(signup.pending, (state) => {
+    //   state.loading = true;
+    // });
+    // builder.addCase(signup.rejected, (state) => {
+    //   state.loading = false;
+    // });
+    // builder.addCase(signup.fulfilled, (state) => {
+    //   state.loading = false;
+    // });
+    // builder.addCase(login.pending, (state) => {
+    //   state.loading = true;
+    // });
+    // builder.addCase(login.rejected, (state) => {
+    //   state.loading = false;
+    // });
     builder.addCase(login.fulfilled, (state, action) => {
-      const { username, accessToken, avatar, _id } = action.payload!;
+      const { username, avatar, _id, accessToken } = action.payload;
       state.id = _id;
       state.username = username;
-      state.accessToken = accessToken;
       state.avatar = avatar;
-      state.loading = false;
+      state.accessToken = accessToken;
+    });
+    builder.addCase(setAvatar.fulfilled, (state, action) => {
+      state.avatar = action.payload;
     });
   },
 });
 
 export default authSlice.reducer;
-export const { logOut, setAccessToken } = authSlice.actions;
+export const { logOut, setUserOnReload } = authSlice.actions;
