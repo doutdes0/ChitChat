@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { APIRoutes } from './APIRoutes';
-import { useAppSelector } from '../hooks/useRedux';
-import useRefreshToken from '../hooks/useRefreshToken';
+import refreshToken from './refreshToken';
 
 export const axiosPublic = axios.create({
   baseURL: APIRoutes.HOST,
@@ -10,21 +9,22 @@ export const axiosPublic = axios.create({
   },
 });
 
-export const axiosPrivate = axios.create({
+const axiosPrivate = axios.create({
   baseURL: APIRoutes.HOST,
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true,
 });
 
 axiosPrivate.interceptors.request.use(
-  (config) => {
-    const token = useAppSelector((state) => state.auth.accessToken);
-    if (token) {
-      config.headers['x-access-token'] = token;
+  (request) => {
+    const token = sessionStorage.getItem('accessToken');
+    console.log('in request interceptor', token);
+    if (token && !request.headers['X-Access-Token']) {
+      request.headers['X-Access-Token'] = token;
+      console.log('logging header', request.headers['x-Access-Token']);
     }
-    return config;
+    return request;
   },
   (e) => Promise.reject(e)
 );
@@ -32,18 +32,19 @@ axiosPrivate.interceptors.request.use(
 axiosPrivate.interceptors.response.use(
   (res) => res,
   async (e) => {
-    const prevReq = e.config;
-    if (e.response.status === 401 && !prevReq._retry) {
-      prevReq._retry = true;
-
+    const originalReq = e.config;
+    if (originalReq.status === 401) {
       try {
-        useRefreshToken();
-        return axiosPrivate(prevReq);
+        const newToken = await refreshToken();
+        console.log('this request took me to response interceptor', newToken);
+        originalReq.headers['X-Access-Token'] = newToken;
+        return axiosPrivate(originalReq);
       } catch (err) {
-        return Promise.reject(err);
+        return console.log(err);
       }
     }
-
     return Promise.reject(e);
   }
 );
+
+export { axiosPrivate };
