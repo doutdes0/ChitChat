@@ -3,6 +3,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const authRouter = require('./routes/auth');
+const userRouter = require('./routes/user');
 const credentials = require('./middleware/credentials');
 const corsOptions = require('./config/corsOptions');
 const cookieParser = require('cookie-parser');
@@ -26,6 +27,11 @@ mongoose
 
 app.use('/API/auth', authRouter);
 app.use(verifyJWT);
+//protected routes
+app.use('/API', userRouter);
+app.all('*', (req, res) => {
+  res.sendStatus(404);
+});
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => console.log(`Server's running on port ${PORT}`));
