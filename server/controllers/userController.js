@@ -20,7 +20,7 @@ const signup = async (req, res, next) => {
 const login = async (req, res, next) => {
   try {
     const { username, password } = req.body;
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ username }).lean();
     if (!user) return res.status(401).json({ msg: 'Incorrect username or password' });
     const isPwValid = await bcrypt.compare(password, user.password);
     if (!isPwValid) return res.status(401).json({ msg: 'Incorrect username or password' });
@@ -35,9 +35,9 @@ const login = async (req, res, next) => {
     user._id = user._id.toString();
     user.accessToken = accessToken;
     delete user.password;
-    delete user.email;
     delete user.isAvatarSet;
     delete user.refreshToken;
+    delete user.__v;
     res
       .cookie('jwt', refreshToken, {
         httpOnly: true,
@@ -54,6 +54,7 @@ const login = async (req, res, next) => {
 
 const refreshToken = async (req, res, next) => {
   try {
+    console.log('in refresh controller, token expired');
     const cookies = req.cookies;
     if (!cookies.jwt) return res.status(401).json({ msg: 'No refresh token in the headers' });
     const refreshToken = cookies.jwt;
@@ -76,4 +77,16 @@ const refreshToken = async (req, res, next) => {
     next(e);
   }
 };
-module.exports = { signup, login, refreshToken };
+
+const setAvatar = async (req, res, next) => {
+  try {
+    console.log('in setavatar controller');
+    const _id = req.params.id;
+    const avatar = req.body.avatar;
+    await User.findOneAndUpdate({ _id }, { avatar });
+    res.sendStatus(200);
+  } catch (e) {
+    next(e);
+  }
+};
+module.exports = { signup, login, refreshToken, setAvatar };
