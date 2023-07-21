@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '../hooks/useRedux';
-import { setUserOnReload } from '../redux/reducers/authSlice';
+import { setAuth } from '../redux/reducers/authSlice';
 
 type Props = {
   children: JSX.Element;
@@ -14,7 +14,7 @@ const PrivateRoute: React.FC<Props> = ({ children }) => {
 
   useEffect(() => {
     if (sessionStorage.getItem('user')) {
-      dispatch(setUserOnReload(JSON.parse(sessionStorage.getItem('user')!)));
+      dispatch(setAuth(JSON.parse(sessionStorage.getItem('user')!)));
     } else {
       navigate('/login');
     }
