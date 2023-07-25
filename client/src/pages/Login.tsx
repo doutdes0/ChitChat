@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { styled } from 'styled-components';
 import { ToastContainer, ToastOptions, toast } from 'react-toastify';
 import { login } from '../redux/thunks';
-import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
+import { useAppDispatch } from '../hooks/useRedux';
 import 'react-toastify/ReactToastify.css';
 import spiral from '../assets/logo-spiral.png';
 import chatBubble from '../assets/chatbubble.png';

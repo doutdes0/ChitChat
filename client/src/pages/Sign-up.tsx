@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { styled } from 'styled-components';
 import { ToastContainer, ToastOptions, toast } from 'react-toastify';
 import { signup } from '../redux/thunks';
-import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
+import { useAppDispatch } from '../hooks/useRedux';
 import 'react-toastify/ReactToastify.css';
 import spiral from '../assets/logo-spiral.png';
 import chatBubble from '../assets/chatbubble.png';
@@ -11,7 +11,6 @@ import chatBubble from '../assets/chatbubble.png';
 const SignUp: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const loading = useAppSelector((state) => state.auth.loading);
 
   const [input, setInput] = useState({
     username: '',
