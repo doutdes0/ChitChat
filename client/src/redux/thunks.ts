@@ -3,6 +3,7 @@ import { APIRoutes } from '../utils/APIRoutes';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { axiosPrivate } from '../utils/axios';
 import axios from 'axios';
+import { UsersState } from './reducers/usersSlice';
 
 interface LoginForm {
   username: string;
@@ -22,6 +23,9 @@ interface LoginRes {
       avatar: string;
     };
   };
+}
+interface GetAllUsersRes {
+  data: UsersState;
 }
 
 interface SetAvatarParams {
@@ -68,7 +72,7 @@ export const logout = createAsyncThunk('auth/logout', async (userID: string, thu
 });
 
 export const setAvatar = createAsyncThunk(
-  'user/setAvatar',
+  'API/setAvatar',
   async (data: SetAvatarParams, thunkAPI) => {
     try {
       await axiosPrivate.post(`${APIRoutes.SET_AVATAR}/${data.userID}`, {
@@ -84,3 +88,16 @@ export const setAvatar = createAsyncThunk(
     }
   }
 );
+
+export const getAllUsers = createAsyncThunk('API/allusers', async (_, thunkAPI) => {
+  try {
+    const res = await axiosPrivate.get<any, GetAllUsersRes>(APIRoutes.ALL_USERS);
+    return res.data.list;
+  } catch (e) {
+    if (axios.isAxiosError(e)) {
+      return thunkAPI.rejectWithValue(e.response?.data.msg);
+    } else {
+      return thunkAPI.rejectWithValue(e);
+    }
+  }
+});
