@@ -9,6 +9,13 @@ export interface AuthState {
   avatar: string;
   accessToken: string;
 }
+interface ServerAuthState {
+  _id: string;
+  username: string;
+  email: string;
+  avatar: string;
+  accessToken: string;
+}
 
 const initialState: AuthState = {
   id: '',
@@ -25,30 +32,15 @@ const authSlice = createSlice({
     logOut: (state) => {
       state = initialState;
     },
-    setUserOnReload: (state, action: PayloadAction<AuthState>) => {
-      const { username, avatar, id, accessToken } = action.payload;
-      state.id = id;
+    setAuth: (state, action: PayloadAction<ServerAuthState>) => {
+      const { username, avatar, _id, accessToken } = action.payload;
+      state.id = _id;
       state.username = username;
       state.avatar = avatar;
       state.accessToken = accessToken;
     },
   },
   extraReducers: (builder) => {
-    // builder.addCase(signup.pending, (state) => {
-    //   state.loading = true;
-    // });
-    // builder.addCase(signup.rejected, (state) => {
-    //   state.loading = false;
-    // });
-    // builder.addCase(signup.fulfilled, (state) => {
-    //   state.loading = false;
-    // });
-    // builder.addCase(login.pending, (state) => {
-    //   state.loading = true;
-    // });
-    // builder.addCase(login.rejected, (state) => {
-    //   state.loading = false;
-    // });
     builder.addCase(login.fulfilled, (state, action) => {
       const { username, avatar, _id, accessToken } = action.payload;
       state.id = _id;
@@ -63,4 +55,4 @@ const authSlice = createSlice({
 });
 
 export default authSlice.reducer;
-export const { logOut, setUserOnReload } = authSlice.actions;
+export const { logOut, setAuth } = authSlice.actions;
