@@ -5,13 +5,17 @@
   --ss-family: 'Montserrat', Helvetica, sans-serif;
   --ms-family: 'Major Mono Display', monospace;
   --black: hsl(225deg 9.52% 8.24%);
+  --white: hsl(0, 0%, 97%);
+  --white_op90: hsla(0, 0%, 97%, 0.9);
   --dark-grey: hsl(228, 8%, 12%);
   --grey: hsl(223.64deg 12.94% 16.67%);
   --light-grey: hsl(228deg 12.2% 40.2%);
   --dark-green: hsl(190, 100%, 20%); /* #005667 */
   --green: hsl(164, 60%, 29%); /* #1d755e */
-  --light-green: hsl(164, 58%, 49%);
+  --light-green: hsl(164, 58%, 49%); /*#34c59f*/
   --blue: hsl(207, 100%, 16%); /* #002e54 */
+  --light-blue: hsl(207, 97%, 40%); /* #002e54 */
+  --light-grey_op40: hsla(228, 12%, 40%, 0.4);
 }
 
 * {
