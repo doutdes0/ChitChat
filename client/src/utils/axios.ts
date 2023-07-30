@@ -2,7 +2,8 @@ import axios from 'axios';
 import { APIRoutes } from './APIRoutes';
 import refreshToken from './refreshToken';
 
-export const axiosPublic = axios.create({
+const axiosPublic = axios.create({
+  withCredentials: true,
   baseURL: APIRoutes.HOST,
   headers: {
     'Content-Type': 'application/json',
@@ -18,11 +19,9 @@ const axiosPrivate = axios.create({
 
 axiosPrivate.interceptors.request.use(
   (request) => {
-    const token = sessionStorage.getItem('accessToken');
-    console.log('in request interceptor', token);
-    if (token && !request.headers['X-Access-Token']) {
-      request.headers['X-Access-Token'] = token;
-      console.log('logging header', request.headers['x-Access-Token']);
+    const { accessToken: token } = JSON.parse(sessionStorage.getItem('user')!);
+    if (token) {
+      request.headers['x-access-token'] = token;
     }
     return request;
   },
@@ -33,11 +32,14 @@ axiosPrivate.interceptors.response.use(
   (res) => res,
   async (e) => {
     const originalReq = e.config;
-    if (originalReq.status === 401) {
+    if (e.request.status === 401 || e.request.status === 403) {
       try {
         const newToken = await refreshToken();
-        console.log('this request took me to response interceptor', newToken);
-        originalReq.headers['X-Access-Token'] = newToken;
+        if (newToken) {
+          originalReq.headers['x-access-token'] = newToken;
+        } else {
+          return Promise.reject(e);
+        }
         return axiosPrivate(originalReq);
       } catch (err) {
         return console.log(err);
@@ -47,4 +49,4 @@ axiosPrivate.interceptors.response.use(
   }
 );
 
-export { axiosPrivate };
+export { axiosPrivate, axiosPublic };
