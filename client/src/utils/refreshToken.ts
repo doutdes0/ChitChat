@@ -1,24 +1,21 @@
 import { axiosPublic } from '../utils/axios';
 import { APIRoutes } from '../utils/APIRoutes';
+import { AuthState } from '../redux/reducers/authSlice';
 
 interface RefreshRes {
   data: {
-    token: string;
+    accessToken: string;
   };
 }
 
-const refreshToken = () => {
-  const refresh = async (): Promise<string> => {
-    const res = await axiosPublic
-      .get<any, RefreshRes>(APIRoutes.REFRESH, {
-        withCredentials: true,
-      })
-      .then((res) => res.data.token);
-    sessionStorage.setItem('accessToken', res);
-    return res;
-  };
-
-  return refresh;
+const refreshToken = async (): Promise<string> => {
+  const res = await axiosPublic
+    .get<any, RefreshRes>(APIRoutes.REFRESH)
+    .then((res) => res.data.accessToken);
+  const user: AuthState = JSON.parse(sessionStorage.getItem('user') as string);
+  user.accessToken = res;
+  sessionStorage.setItem('user', JSON.stringify(user));
+  return res;
 };
 
 export default refreshToken;
