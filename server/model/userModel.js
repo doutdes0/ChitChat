@@ -23,10 +23,6 @@ const userSchema = mongoose.Schema({
     type: String,
     default: '',
   },
-  isAvatarSet: {
-    type: Boolean,
-    default: false,
-  },
 });
 
 const User = mongoose.model('Users', userSchema);

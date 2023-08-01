@@ -30,7 +30,7 @@ app.use(verifyJWT);
 //protected routes
 app.use('/API', userRouter);
 app.all('*', (req, res) => {
-  res.sendStatus(404);
+  res.status(404).json({ msg: 'Handled by .all' });
 });
 
 const PORT = process.env.PORT;
