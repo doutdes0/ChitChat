@@ -54,11 +54,12 @@ const login = async (req, res, next) => {
 
 const refreshToken = async (req, res, next) => {
   try {
-    console.log('in refresh controller, token expired');
+    // console.log('refreshToken contr: ', req.headers);
     const cookies = req.cookies;
-    if (!cookies.jwt) return res.status(401).json({ msg: 'No refresh token in the headers' });
+    // console.log('refreshC: logging cookie: ', cookies.jwt);
+    if (!cookies.jwt) return res.status(401).json({ msg: 'No refresh token cookie' });
     const refreshToken = cookies.jwt;
-    const user = User.findOne({ refreshToken });
+    const user = await User.findOne({ refreshToken });
     if (!user) res.status(401).json({ msg: 'User with this refresh token not found' });
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
       if (err || user.username !== decoded.username) {
@@ -80,7 +81,6 @@ const refreshToken = async (req, res, next) => {
 
 const setAvatar = async (req, res, next) => {
   try {
-    console.log('in setavatar controller');
     const _id = req.params.id;
     const avatar = req.body.avatar;
     await User.findOneAndUpdate({ _id }, { avatar });
@@ -89,4 +89,14 @@ const setAvatar = async (req, res, next) => {
     next(e);
   }
 };
-module.exports = { signup, login, refreshToken, setAvatar };
+
+const getAllUsers = async (req, res, next) => {
+  try {
+    const username = req.user;
+    const list = await User.find({ username: { $ne: username } }).select('avatar username _id');
+    return res.status(200).json({ list });
+  } catch (e) {
+    next(e);
+  }
+};
+module.exports = { signup, login, refreshToken, setAvatar, getAllUsers };
