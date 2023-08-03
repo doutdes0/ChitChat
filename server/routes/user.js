@@ -1,7 +1,7 @@
 const router = require('express').Router();
-const { setAvatar } = require('../controllers/userController');
+const { setAvatar, getAllUsers } = require('../controllers/userController');
 
-// router.get('/allUsers/:id', getAllUsers);
+router.get('/allusers', getAllUsers);
 router.post('/setavatar/:id', setAvatar);
 
 module.exports = router;
