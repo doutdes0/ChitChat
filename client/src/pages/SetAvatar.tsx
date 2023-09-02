@@ -1,14 +1,14 @@
-import axios from 'axios';
-import { useEffect, useState } from 'react';
-import { useAppSelector, useAppDispatch } from '../hooks/useRedux';
-import { useNavigate } from 'react-router-dom';
-import { setAvatar } from '../redux/thunks';
-import { styled } from 'styled-components';
-import { ToastContainer, ToastOptions, toast } from 'react-toastify';
-import { AuthState } from '../redux/reducers/authSlice';
-import 'react-toastify/ReactToastify.css';
-import parse from 'html-react-parser';
-import loader from '../assets/loader.svg';
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useAppSelector, useAppDispatch } from "../hooks/useRedux";
+import { useNavigate, useLocation } from "react-router-dom";
+import { setAvatar } from "../redux/thunks";
+import { styled } from "styled-components";
+import { ToastContainer, ToastOptions, toast } from "react-toastify";
+import { AuthState } from "../redux/reducers/authSlice";
+import "react-toastify/ReactToastify.css";
+import parse from "html-react-parser";
+import loader from "../assets/loader.svg";
 
 const SetAvatar: React.FC = () => {
   const [avatars, setAvatars] = useState<string[]>([]);
@@ -16,6 +16,7 @@ const SetAvatar: React.FC = () => {
   const [selectedAvatar, setselectedAvatar] = useState<number | null>(null);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const location = useLocation();
   const id = useAppSelector((state) => state.auth.id);
   const avatar = useAppSelector((state) => state.auth.avatar);
   const source = axios.CancelToken.source();
@@ -26,7 +27,7 @@ const SetAvatar: React.FC = () => {
       const rando = Math.floor(Math.random() * 10000);
       try {
         const res = await axios.get(`https://api.multiavatar.com/${rando}`, {
-          headers: { 'Content-Type': 'text/html' },
+          headers: { "Content-Type": "text/html" },
           cancelToken: source.token,
         });
         data.push(res.data);
@@ -35,17 +36,17 @@ const SetAvatar: React.FC = () => {
       }
     }
     if (data.length < 4) {
-      toast.error('Too many requests, please wait a minute😟', toastOptions);
+      toast.error("Too many requests, please wait a minute😟", toastOptions);
     }
     setAvatars(data);
     setIsLoading(false);
   };
 
   useEffect(() => {
-    if (avatar) navigate('/');
+    if (avatar && !location.state) navigate("/");
     getAvatars();
     return () => {
-      source.cancel('GetAvatars request cancelled');
+      source.cancel("GetAvatars request cancelled");
     };
   }, []);
 
@@ -62,14 +63,16 @@ const SetAvatar: React.FC = () => {
       dispatch(setAvatar({ userID: id, avatar: avatars[selectedAvatar] }))
         .unwrap()
         .then((avatar) => {
-          if (sessionStorage.getItem('user')) {
-            const user: AuthState = JSON.parse(sessionStorage.getItem('user') as string);
+          if (sessionStorage.getItem("user")) {
+            const user: AuthState = JSON.parse(
+              sessionStorage.getItem("user") as string
+            );
             user.avatar = avatar;
-            sessionStorage.setItem('user', JSON.stringify(user));
+            sessionStorage.setItem("user", JSON.stringify(user));
           }
-          toast.success('Success!🎉 Taking you to chat', toastOptions);
+          toast.success("Success!🎉 Taking you to chat", toastOptions);
           setTimeout(() => {
-            navigate('/');
+            navigate("/");
           }, 3000);
         })
         .catch((e) => {
@@ -81,14 +84,14 @@ const SetAvatar: React.FC = () => {
   };
 
   const toastOptions: ToastOptions = {
-    position: 'bottom-right',
+    position: "bottom-right",
     autoClose: 5000,
     hideProgressBar: false,
     closeOnClick: true,
     pauseOnHover: true,
     draggable: true,
     progress: undefined,
-    theme: 'light',
+    theme: "light",
   };
 
   return (
@@ -96,10 +99,7 @@ const SetAvatar: React.FC = () => {
       {isLoading ? (
         <Container>
           <div className="loader-wrapper">
-            <img
-              src={loader}
-              alt="loader"
-            />
+            <img src={loader} alt="loader" />
           </div>
         </Container>
       ) : (
@@ -110,7 +110,7 @@ const SetAvatar: React.FC = () => {
               return (
                 <div
                   onClick={() => handleClickAvatar(i)}
-                  className={`avatar ${selectedAvatar === i ? 'selected' : ''}`}
+                  className={`avatar ${selectedAvatar === i ? "selected" : ""}`}
                   key={avatar}
                 >
                   {parse(avatar)}
@@ -138,7 +138,7 @@ const Container = styled.div`
   height: 100vh;
   width: 100vw;
   gap: 4rem;
-  background-image: url('/src/assets/main-bg.svg');
+  background-image: url("/src/assets/main-bg.svg");
   /* background by SVGBackgrounds.com */
   background-repeat: no-repeat;
   background-size: cover;
