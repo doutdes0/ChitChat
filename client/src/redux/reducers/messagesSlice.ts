@@ -23,11 +23,19 @@ const messagesSlice = createSlice({
   reducers: {
     receive_msg: (state, action: PayloadAction<Payload_Msg>) => {
       const { userID, msg } = action.payload;
-      state[userID].push({ isFromSelf: false, msg });
+      if (state[userID]) {
+        state[userID].unshift({ isFromSelf: false, msg });
+      } else {
+        state[userID] = [{ isFromSelf: false, msg }];
+      }
     },
     send_msg_io: (state, action: PayloadAction<Payload_Msg>) => {
       const { userID, msg } = action.payload;
-      state[userID].push({ isFromSelf: true, msg });
+      if (state[userID]) {
+        state[userID].unshift({ isFromSelf: true, msg });
+      } else {
+        state[userID] = [{ isFromSelf: true, msg }];
+      }
     },
   },
   extraReducers: (builder) => {
@@ -36,7 +44,7 @@ const messagesSlice = createSlice({
       (state, action: PayloadAction<MessagesState>) => {
         const messages = action.payload;
         const userID = Object.keys(messages)[0];
-        state[userID] = messages.userID;
+        state[userID] = [...messages[userID]];
       }
     );
   },
