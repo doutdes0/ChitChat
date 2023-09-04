@@ -1,6 +1,6 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { login, setAvatar } from '../thunks';
-import { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
+import { login, setAvatar } from "../thunks";
+import { PayloadAction } from "@reduxjs/toolkit";
 
 export interface AuthState {
   id: string;
@@ -18,20 +18,18 @@ interface ServerAuthState {
 }
 
 const initialState: AuthState = {
-  id: '',
-  username: '',
-  email: '',
-  avatar: '',
-  accessToken: '',
+  id: "",
+  username: "",
+  email: "",
+  avatar: "",
+  accessToken: "",
 };
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
-    logOut: (state) => {
-      state = initialState;
-    },
+    logOut: () => initialState,
     setAuth: (state, action: PayloadAction<ServerAuthState>) => {
       const { username, avatar, _id, accessToken } = action.payload;
       state.id = _id;

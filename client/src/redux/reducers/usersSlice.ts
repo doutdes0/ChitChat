@@ -1,18 +1,18 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { getAllUsers } from '../thunks';
+import { createSlice } from "@reduxjs/toolkit";
+import { getAllUsers } from "../thunks";
 
-export type UsersState = {
+export interface UsersState {
   list: {
     _id: string;
     avatar: string;
     username: string;
   }[];
-};
+}
 
 const initialState: UsersState = { list: [] };
 
 const usersSlice = createSlice({
-  name: 'users',
+  name: "users",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
