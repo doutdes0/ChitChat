@@ -1,27 +1,27 @@
-import axios from 'axios';
-import { APIRoutes } from './APIRoutes';
-import refreshToken from './refreshToken';
+import axios from "axios";
+import { APIRoutes } from "./APIRoutes";
+import refreshToken from "./refreshToken";
 
 const axiosPublic = axios.create({
   withCredentials: true,
   baseURL: APIRoutes.HOST,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
 const axiosPrivate = axios.create({
   baseURL: APIRoutes.HOST,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
 axiosPrivate.interceptors.request.use(
   (request) => {
-    const { accessToken: token } = JSON.parse(sessionStorage.getItem('user')!);
+    const { accessToken: token } = JSON.parse(sessionStorage.getItem("user")!);
     if (token) {
-      request.headers['x-access-token'] = token;
+      request.headers["x-access-token"] = token;
     }
     return request;
   },
@@ -36,7 +36,7 @@ axiosPrivate.interceptors.response.use(
       try {
         const newToken = await refreshToken();
         if (newToken) {
-          originalReq.headers['x-access-token'] = newToken;
+          originalReq.headers["x-access-token"] = newToken;
         } else {
           return Promise.reject(e);
         }
