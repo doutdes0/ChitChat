@@ -7,7 +7,7 @@ const getAllMessages = async (req, res, next) => {
       users: {
         $all: [from, to],
       },
-    }).sort({ updatedAt: 1 });
+    }).sort({ updatedAt: -1 });
 
     const mapped_messages = messages.map((msg) => {
       return {
@@ -15,12 +15,8 @@ const getAllMessages = async (req, res, next) => {
         isFromSelf: msg.from.toString() === from,
       };
     });
-    const data = {
-      [to]: mapped_messages,
-    };
-    console.log("in getAllMsgs contr", data);
 
-    res.status(200).json({ data });
+    res.status(200).json({ [to]: mapped_messages });
   } catch (e) {
     next(e);
   }
