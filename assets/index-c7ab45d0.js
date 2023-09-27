@@ -413,7 +413,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
 `,tC=()=>{const e=Hn(a=>a.auth.avatar),t=Hn(a=>a.auth.username),n=Hn(a=>a.auth.id),[r,f]=y.useState(null);return C.jsxs(nC,{children:[C.jsx(u8,{username:t,avatar:e,setChat:f,selectedChatID:r==null?void 0:r._id}),C.jsx("h2",{children:"ChitChAt"}),r?C.jsx(Xx,{id:n,selectedChat:r}):C.jsx(Zx,{username:t})]})},nC=Ut.div`
   height: 100vh;
   width: 100vw;
-  background-image: url("/src/assets/main-bg.svg");
+  background-image: url("/assets/main-bg.svg");
   /* background by SVGBackgrounds.com */
   background-repeat: no-repeat;
   background-size: cover;
@@ -470,7 +470,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-image: url('/src/assets/form-bg.svg');
+  background-image: url("/assets/form-bg.svg");
   /* background by SVGBackgrounds.com */
   background-repeat: no-repeat;
   background-size: cover;
@@ -562,7 +562,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-image: url('/src/assets/form-bg.svg');
+  background-image: url("/assets/form-bg.svg");
   /* background by SVGBackgrounds.com */
   background-repeat: no-repeat;
   background-size: cover;
@@ -649,7 +649,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
   height: 100vh;
   width: 100vw;
   gap: 4rem;
-  background-image: url("/src/assets/main-bg.svg");
+  background-image: url("/assets/main-bg.svg");
   /* background by SVGBackgrounds.com */
   background-repeat: no-repeat;
   background-size: cover;
