@@ -1,20 +1,20 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { styled } from 'styled-components';
-import { ToastContainer, ToastOptions, toast } from 'react-toastify';
-import { login } from '../redux/thunks';
-import { useAppDispatch } from '../hooks/useRedux';
-import 'react-toastify/ReactToastify.css';
-import spiral from '../assets/logo-spiral.png';
-import chatBubble from '../assets/chatbubble.png';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { styled } from "styled-components";
+import { ToastContainer, ToastOptions, toast } from "react-toastify";
+import { login } from "../redux/thunks";
+import { useAppDispatch } from "../hooks/useRedux";
+import "react-toastify/ReactToastify.css";
+import spiral from "../assets/logo-spiral.png";
+import chatBubble from "../assets/chatbubble.png";
 
 const Login: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const [input, setInput] = useState({
-    username: '',
-    password: '',
+    username: "",
+    password: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,8 +29,8 @@ const Login: React.FC = () => {
     dispatch(login(data))
       .unwrap()
       .then((user) => {
-        sessionStorage.setItem('user', JSON.stringify(user));
-        navigate('/setAvatar');
+        sessionStorage.setItem("user", JSON.stringify(user));
+        navigate("/setAvatar");
       })
       .catch((e) => {
         toast.error(e, toastOptions);
@@ -38,14 +38,14 @@ const Login: React.FC = () => {
   };
 
   const toastOptions: ToastOptions = {
-    position: 'bottom-right',
+    position: "bottom-right",
     autoClose: 5000,
     hideProgressBar: false,
     closeOnClick: true,
     pauseOnHover: true,
     draggable: true,
     progress: undefined,
-    theme: 'light',
+    theme: "light",
   };
 
   return (
@@ -57,15 +57,8 @@ const Login: React.FC = () => {
           onSubmit={(e) => handleSubmit(e)}
         >
           <div className="logo-wrapper">
-            <img
-              src={spiral}
-              alt="spiral"
-            />
-            <img
-              className="chat-icon"
-              src={chatBubble}
-              alt="chat-icon"
-            />
+            <img src={spiral} alt="spiral" />
+            <img className="chat-icon" src={chatBubble} alt="chat-icon" />
             <h1>ChitChAt</h1>
           </div>
 
@@ -107,7 +100,7 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-image: url('/src/assets/form-bg.svg');
+  background-image: url("/src/assets/form-bg.svg");
   /* background by SVGBackgrounds.com */
   background-repeat: no-repeat;
   background-size: cover;
@@ -143,6 +136,7 @@ const Container = styled.div`
     border-radius: 3rem;
     background: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(110px);
+    -webkit-backdrop-filter: blur(110px);
     border: 1px solid rgba(255, 255, 255, 0.3);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
     input {
